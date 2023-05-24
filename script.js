@@ -4,52 +4,84 @@ let gameRules = {
     attemptsNumber: 2
 };
 
+let cats = [];
+
 let catNumberOne = {
     name: "Кекс",
     points: 0
 };
+cats.push(catNumberOne);
 
 let catNumberTwo = {
     name: "Плакс",
     points: 0
 };
+cats.push(catNumberTwo);
 
-let cats = [catNumberOne, catNumberTwo];
+let catNumberThree = {
+    name: "Мурзик",
+    points: 0
+};
+cats.push(catNumberThree);
+
 
 let rules = function(gameRules, players) {
     for (let currentAttempt = 1; currentAttempt <= gameRules.attemptsNumber; currentAttempt++) {
         for (let currentPlayer = 0; currentPlayer < players.length; currentPlayer++) {
-            let randomNumber = Math.floor(Math.random()*6);
-            while (randomNumber == 0) {
-                randomNumber = Math.floor(Math.random()*6);
+            let randomNumber = Math.floor(Math.random()*(6*gameRules.diceNumber));
+            while (randomNumber < gameRules.diceNumber) {
+                randomNumber = Math.floor(Math.random()*(6*gameRules.diceNumber));
             }
             players[currentPlayer].points += randomNumber;
-            console.log("На костях кота по имени " + players[currentPlayer].name + ": " + players[currentPlayer].points);
+            if (currentAttempt == gameRules.attemptsNumber) {
+                console.log("На костях кота по имени " + players[currentPlayer].name + ": " + players[currentPlayer].points);
+            }
         }
     }
 };
 
-rules(gameRules, cats);
-
 
 let winners = function(players) {
-    let winner = [];
+    let winners = [];
     let max = players[0];
     for (let i = 0; i < players.length; i++) {
         let currentPlayer = players[i];
         if (currentPlayer.points > max.points) {
             max = currentPlayer;
-            winner = [max];
-        } else if (currentPlayer.points == max.points) {
-            winner = [max];
-            winner.push(currentPlayer);
-        } else {
-            winner = [max];
+            winners = [max];
+        } else if (currentPlayer.points === max.points) {
+            winners.push(currentPlayer);
         }
     }
-    console.log(winner);
-    return winner;
+    return winners;
 };
 
-winners(cats);
 
+let congratulation = function(players, winners) {
+    let message;
+    if (winners.length == players.length) {
+        message = "Вы все как на подбор, одинаковые!";
+        return message;
+    }  else if (winners.length == 1) {
+        message = "Победитель - игрок: ";
+    } else if (winners.length > 1) {
+        message = "Победители - игроки: ";
+    }
+
+    for (let numberOfWinners = 0; numberOfWinners < winners.length; numberOfWinners++) {
+        if (numberOfWinners >= 1) {
+            message += ", ";
+        }
+        message += winners[numberOfWinners].name;
+    }
+    message += ".";
+    message += " Количество очков: " + winners[0].points + ".";
+    
+    return message;
+};
+
+
+rules(gameRules, cats);
+let top = winners(cats);
+let congrats = congratulation(cats, top);
+console.log(congrats);
